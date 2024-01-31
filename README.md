@@ -16,3 +16,6 @@ Il s'agit de réaliser la partie Software d'une station météo composé de sond
 
 Voir énoncé complet du projet au lien suivant :
 https://ensg_dei.gitlab.io/web-az/js/exercices/projet-station-meteo/#travail-a-realiser
+
+Structure des API:
+https://app.swaggerhub.com/apis/CLOVISBERGERET/piensg/1.0.0
