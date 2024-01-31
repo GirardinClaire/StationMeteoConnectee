@@ -1,0 +1,236 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/CLOVISBERGERET/piensg/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: http://piensg0XX.ensg.eu
+info:
+  version: "1.0.0"
+  title: piensg-api
+  description: The API for the TSI Weather project
+paths:
+  /live:
+    get:
+      tags:
+       - Live
+      description: returns all live values
+      parameters: 
+        - name: ptdr
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveState'
+        '400':
+          description: 'invalid input, object invalid'
+  /archive:
+    get:
+      tags: 
+        - Archive
+      description: returns archived values
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          required: false
+          schema:
+            oneOf:
+              - type: string
+                enum:
+                  - now
+              - type: string
+                format: date-time
+            example: now
+        - name: filter
+          in: query
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - all 
+                - prsr
+                - tprt
+                - rain
+                - wind
+                - hmdt
+                - lght
+                - pressure
+                - temperature
+                - humidity
+                - light
+            example: "prsr,tprt,light"
+        - name: interval
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: '^\d+(\.\d+)?(s|m|h|D|M|Y)$'
+            example: 5.7h
+      responses: 
+        '200':
+          description: response
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArchiveState'
+        '400':
+          description: 'invalid input, object invalid'
+  /doc:
+    get:
+      tags:
+        - Documentation
+      description: Ceci est la documentation
+      responses:
+        '200':
+          description: response HTML
+  /pirate:
+    get:
+      responses:
+        '404':
+          description: "c'est sécure !"
+  /coffee:
+    get:
+      responses:
+        '418':
+          description: "nope"
+  
+components:
+  schemas:
+    LiveState:
+      type: object
+      properties:
+        name: 
+          type: string
+          pattern: '^piensg\d{3}$'
+        status: 
+          type: boolean
+        location:
+          type: object
+          properties:
+            date: 
+              type: string
+              format: date-time
+            coords:
+              type: array
+              minItems: 2
+              maxItems: 2
+              items:
+                type: number
+                format: double
+        measurements:
+          type: object
+          properties:
+            date: 
+              type: string
+              format: date-time
+            pressure: 
+              type: number
+              format: double
+            temperature: 
+              type: number
+              format: double
+            rain: 
+              type: string
+              format: date-time
+            wind:
+              type: object
+              properties: 
+                speed: 
+                  type: number
+                  format: double
+                direction: 
+                  type: number
+                  format: double
+            light: 
+              type: number
+              format: double
+            humidity: 
+              type: number
+              format: double
+    ArchiveState:
+      type: object
+      properties:
+        name: 
+          type: string
+          pattern: '^piensg\d{3}$'
+        status: 
+          type: boolean
+        location:
+          type: object
+          properties:
+            date: 
+              type: array
+              items:
+                type: string
+                format: date-time
+            coords:
+              type: array
+              items:
+                type: array
+                minItems: 2
+                maxItems: 2
+                items:
+                  type: number
+                  format: double
+        measurements:
+          type: object
+          properties:
+            date: 
+              type: array
+              items:
+                type: string
+                format: date-time
+            pressure: 
+              type: array
+              items:
+                type: number
+                format: double
+            temperature: 
+              type: array
+              items:
+                type: number
+                format: double
+            rain: 
+              type: array
+              items:
+                type: number
+                format: double
+            wind:
+              type: object
+              properties: 
+                speed: 
+                  type: array
+                  items:
+                    type: number
+                    format: double
+                direction: 
+                  type: array
+                  items:
+                    type: number
+                    format: double
+            light: 
+              type: array
+              items:
+                type: number
+                format: double
+            humidity: 
+              type: array
+              items:
+                type: number
+                format: double
