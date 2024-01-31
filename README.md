@@ -4,13 +4,14 @@ Projet de station météo connectée réalisé dans le cadre du cursus TSI-C (3�
 
 
 Il s'agit de réaliser la partie Software d'une station météo composé de sondes et d'une centrale. Chaque sonde est relié à plusieurs capteurs qui donnent des informations diverses :
-Température
-Hygrométrie
-Pression atmosphérique
-Pluviométrie
-Luminosité
-Vitesse et direction du vent
-Position GPS et heure
+- Température
+- Hygrométrie
+- Pression atmosphérique
+- Pluviométrie
+- Luminosité
+- Vitesse et direction du vent
+- Position GPS et heure
+
 ...
 
 
