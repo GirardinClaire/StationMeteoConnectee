@@ -1,60 +1,62 @@
 const express = require('express');
 const router = express.Router();
 
-const { InfluxDB } = require('@influxdata/influxdb-client');
-
-// Création du client InfluxDB
-const influxUrl = 'http://localhost:8086';
-const influxToken = 'your-token';
-const influxOrg = 'your-org';
-const influxBucket = 'your-bucket';
-
-const client = new InfluxDB({
-  url: influxUrl,
-  token: influxToken,
-});
-
-const queryApi = client.getQueryApi(influxOrg);
+const db = require('../database.js');
 
 
-async function getArchiveData(from, to, filter, interval) {
-  // Utilisez votre fluxQuery pour récupérer les données depuis la base de données
-  const fluxQuery = `
-    from(bucket: "${influxBucket}")
-      |> range(start: ${from}, stop: ${to})
-      |> filter(fn: (r) => r._measurement == "${filter}")
-      |> yield()
-  `;
+// // Exemple de requête simple pour vérifier la connexion
+// const query = 'from(bucket: "' + db.influxBucket + '") |> range(start: -1h)';
+// db.queryApi.queryRows(query, {
+//   next(row, tableMeta) {
+//     console.log(row, tableMeta);
+//   },
+//   error(error) {
+//     console.error(error);
+//   },
+//   complete() {
+//     console.log('Query completed successfully');
+//   },
+// });
+
+
+
+
+// async function getArchiveData(from, to, filter, interval) {
+//   // Utilisation d'une fluxQuery pour récupérer les données depuis la base de données
+//   const fluxQuery = `
+//   SELECT *
+//   FROM meteo
+//   WHERE time >= ${from} - INTERVAL '${from}`;
   
-  // Collectez les lignes de données depuis la base de données
-  const { promise } = queryApi.collectRows(fluxQuery);
-  const rows = await promise;
+//   // Collection des lignes de données depuis la base de données
+//   const { promise } = queryApi.collectRows(fluxQuery);
+//   const rows = await promise;
 
-  // Formatez les données récupérées dans la structure attendue
-  const formattedData = rows.map(row => ({
-    name: row.name,
-    location: {
-      date: row.location.date,
-      coords: row.location.coords
-    },
-    status: row.status,
-    measurements: {
-      date: row.measurements.date,
-      rain: row.measurements.rain,
-      light: row.measurements.light,
-      temperature: row.measurements.temperature,
-      humidity: row.measurements.humidity,
-      pressure: row.measurements.pressure,
-      wind: {
-        speed: row.measurements.wind.speed,
-        direction: row.measurements.wind.direction
-      }
-    }
-  }));
+//   // Formatage des données récupérées dans la structure attendue
+//   const formattedData = rows.map(row => ({
+//     name: row.name,
+//     location: {
+//       date: row.date,
+//       coords: row.coords
+//     },
+//     status: row.status,
+//     measurements: {
+//       date: row.date,
+//       rain: row.rain,
+//       light: row.light,
+//       temperature: row.temperature,
+//       humidity: row.humidity,
+//       pressure: row.pressure,
+//       wind: {
+//         speed: row.windSpeed,
+//         direction: row.windDirection
+//       }
+//     }
+//   }));
 
-  // Retournez les données formatées
-  return formattedData;
-}
+//   // Retour des données formatées
+//   return formattedData;
+// }
 
 
 /* GET Archive data */

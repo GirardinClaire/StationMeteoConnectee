@@ -1,0 +1,24 @@
+services:
+  influxdb:
+    image: influxdb:2.6-alpine
+    #env_file:
+    #  - influxv2.env
+    container_name: influxdb
+    restart: always
+    ports:
+      - 8086:8086
+    networks:
+      - monitoring
+    volumes:
+      - influxdb-storage:/var/lib/influxdb2:rw
+#    environment:
+#      - INFLUXDB_DB=stationmeteo
+#      - DOCKER_INFLUXDB_INIT_MODE=upgrade
+#      - DOCKER_INFLUXDB_INIT_USERNAME=user
+#      - DOCKER_INFLUXDB_INIT_PASSWORD=password
+#      - DOCKER_INFLUXDB_INIT_ORG=meteo
+#      - DOCKER_INFLUXDB_INIT_BUCKET=meteo
+networks:
+  monitoring:
+volumes:
+  influxdb-storage:
