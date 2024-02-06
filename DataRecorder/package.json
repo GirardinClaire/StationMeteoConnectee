@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "watch": "nodemon",
+    "watch": "nodemon --ignore Data/*",
     "start": "node main.js"
   },
   "devDependencies": {
