@@ -4,8 +4,15 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "nodemon",
+    "start": "node main.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "log-timestamp": "^0.3.0"
+  }
 }
