@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import CompteurView from "../views/CompteurView.vue";
 import LiveView from "../views/LiveView.vue";
 import ArchivesView from "../views/ArchivesView.vue";
 
@@ -9,11 +8,6 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
-  },
-  {
-    path: "/compteur",
-    name: "compteur",
-    component: CompteurView,
   },
   {
     path: "/live",

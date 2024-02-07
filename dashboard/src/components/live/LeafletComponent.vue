@@ -13,28 +13,25 @@
 </template>
 
 <script>
-// @ is an alias to /src
-import store from "@/store";
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
 
 export default {
-  store: store,
   components: {
     LMap,
     LTileLayer,
   },
-  computed: {
-    zoom() {
-      return store.state.zoom;
-    },
+  data() {
+    return {
+      zoom: 2,
+    };
   },
 };
 </script>
 
 <style scoped>
 .leaflet-map {
-  flex: 1; /* Faites en sorte que la carte Leaflet occupe tout l'espace disponible à gauche */
-  height: 400px; /* Ajustez la hauteur selon vos besoins */
+  flex: 1; /* Occupation de tout l'espace disponible à gauche */
+  height: 400px; /* ajustement la hauteur */
 }
 </style>

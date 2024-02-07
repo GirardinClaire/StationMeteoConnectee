@@ -1,7 +1,5 @@
 <template>
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/compteur">Compteur</router-link> |
     <router-link to="/live">Live</router-link> |
     <router-link to="/archives">Archives</router-link>
   </nav>
