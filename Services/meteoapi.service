@@ -5,7 +5,7 @@ Description=node server to give data from meteo sensors
 WorkingDirectory=/home/pi/station/Server
 ExecStartPre=/usr/bin/npm install
 ExecStart=/usr/bin/npm start
-EnvironementFile=/home/pi/station/.env
+EnvironmentFile=/home/pi/station/.env
 
 [Install]
 WantedBy=multi-user.target
