@@ -41,6 +41,9 @@ const pathDataRain = dir_simul + "/dev/shm/rainCounter.log";
 function readFileRain(fileContent) {
   const date = new Date(fileContent);
 
+  if (lu.liveData.measurements.rain != date && date >= lu.incrData.rainComputedDate) {
+    lu.incrData.rainTurn ++;
+  }
   lu.liveData.measurements.rain = date;
   lu.updateLive();
 }

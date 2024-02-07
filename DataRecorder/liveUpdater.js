@@ -25,6 +25,13 @@ const liveData = {
   }
 };
 
+const size_godet_rain = 0.3274; // mm.m-2
+
+const incrData = {
+  rainTurn: 0,
+  rainComputedDate: new Date(),
+};
+
 function writeJsonFile(path, data) {
   fs.writeFile(path, JSON.stringify(data), (err) => {
     if (err) {
@@ -33,28 +40,27 @@ function writeJsonFile(path, data) {
   });
 }
 
-function getDataLivePTDR() {
-  const livePTDR = {...liveData};
-  return livePTDR;
-}
-
 function updateLive() {
   writeJsonFile(pathLiveDataJson, liveData);
-  //writeJsonFile(pathLiveDataJsonPTDR, getDataLivePTDR());
 }
 
 function saveInDB() {
+  const now = new Date();
+  const dt = (now.getTime() - incrData.rainComputedDate.getTime()) /3600000;
+
   const data = {
     loc_lat: liveData.location.coords[0],
     loc_lng: liveData.location.coords[1],
     tmpr: liveData.measurements.temperature,
     hmdt: liveData.measurements.humidity,
     prsr: liveData.measurements.presure,
-    rain: null,
+    rain: incrData.rainTurn * size_godet_rain / dt,
     lght: liveData.measurements.light,
     wind_speed: liveData.measurements.wind.speed,
     wind_dir: liveData.measurements.wind.direction
   };
+  incrData.rainComputedDate = now;
+  incrData.rainTurn = 0;
   console.log("save in db ", data);
   db.set(data);
 }
@@ -66,5 +72,6 @@ setInterval(saveInDB, 30000);
 
 module.exports = {
   liveData: liveData,
-  updateLive: updateLive
+  updateLive: updateLive,
+  incrData: incrData,
 };
