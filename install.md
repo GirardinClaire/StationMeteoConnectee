@@ -34,7 +34,8 @@ docker volume rm docker_influxdb-storage
 - Dans un terminal
 ``̀
 cd DataRecorder
-echo "export INFLUXDB_TOKEN=*********" > .env
+echo "export INFLUXDB_TOKEN=*********" > ../.env
+source ../.env
 npm install
 npm run start
 ```

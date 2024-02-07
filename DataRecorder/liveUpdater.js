@@ -2,7 +2,7 @@ const fs = require('fs');
 const db = require('./database.js');
 
 const pathLiveDataJson = "Data/live.json";
-//const pathLiveDataJsonPTDR = "Data/livePtdr.json";
+const pathLiveDataJsonPTDR = "Data/livePtdr.json";
 
 const liveData = {
   name: "piensg028",
@@ -15,7 +15,7 @@ const liveData = {
     date: null,
     temperature: null,
     humidity: null,
-    presure: null,
+    pressure: null,
     rain: null,
     light: null,
     wind: {
@@ -42,6 +42,18 @@ function writeJsonFile(path, data) {
 
 function updateLive() {
   writeJsonFile(pathLiveDataJson, liveData);
+  const liveDataPtdr = {
+    name: liveData.name,
+    status:liveData.status,
+    location: liveData.location,
+    measurements: {
+      date: liveData.measurements.date,
+      temperature: liveData.measurements.temperature,
+      pressure: liveData.measurements.pressure,
+      rain: liveData.measurements.rain,
+    }
+  };
+  writeJsonFile(pathLiveDataJsonPTDR, liveDataPtdr);
 }
 
 function saveInDB() {
@@ -53,7 +65,7 @@ function saveInDB() {
     loc_lng: liveData.location.coords[1],
     tmpr: liveData.measurements.temperature,
     hmdt: liveData.measurements.humidity,
-    prsr: liveData.measurements.presure,
+    prsr: liveData.measurements.pressure,
     rain: incrData.rainTurn * size_godet_rain / dt,
     lght: liveData.measurements.light,
     wind_speed: liveData.measurements.wind.speed,

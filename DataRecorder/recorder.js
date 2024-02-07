@@ -29,7 +29,7 @@ function readFileTph(fileContent) {
   lu.liveData.measurements.date = parsed.date;
   lu.liveData.measurements.temperature = parsed.temp;
   lu.liveData.measurements.humidity = parsed.hygro;
-  lu.liveData.measurements.presure = parsed.press;
+  lu.liveData.measurements.pressure = parsed.press;
   lu.updateLive();
 }
 watchFile(pathDataSensHat, readFileTph);
