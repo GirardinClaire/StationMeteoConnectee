@@ -27,11 +27,70 @@ async function getArchiveData() {
   };
 }
 
+const filterMap = {
+  prsr: ["prsr"],
+  tprt: ["tmpr"],
+  rain: ["rain"],
+  wind: ["wind_speed", "wind_dir"],
+  hmdt: ["hmdt"],
+  lght: ["lght"],
+  pressure: ["prsr"],
+  temperature: ["tmpr"],
+  humidity: ["hmdt"],
+  light: ["lght"]
+}
+const filterKeys = Object.keys(filterMap);
 
 
-/* GET Archive data */
 router.get('/', async function(req, res, next) {
+  const params = {};
   try {
+    params.from = new Date(req.query.from);
+    if (req.query.from == null || isNaN(params.from.getTime())) {
+      throw "from";
+    }
+    params.to = req.query.to ? new Date(req.query.to): new Date();
+    if (isNaN(params.to.getTime()) || params.to <= params.from) {
+      throw "to";
+    }
+    params.filter = req.query.filter?.split(",");
+    if (params.filter == null || params.filter == "all") {
+      params.filter = filterKeys;
+    }
+    if (params.filter.filter(value => !filterKeys.includes(value)).length!=0) {
+      throw "filter";
+    }
+    params.filterSQL = ["loc_lat", "loc_lng", ...new Set(params.filter.map(f => filterMap[f]).flat())];
+
+    if (req.query.interval) {
+      const intervalValue = parseFloat(req.query.interval);
+      const intervalFactor = req.query.interval?.substr(-1);
+      const factors = {
+        s: 1000,
+        m: 1000*60,
+        h: 1000*60*60,
+        "D": 1000*60*60*24,
+        "M": 1000*60*60*24*30,
+        "Y": 1000*60*60*24*365
+      };
+      params.interval = intervalValue * factors[intervalFactor];
+      if (isNaN(params.interval)) {
+        throw "interval";
+      }
+    } else {
+      params.interval = (params.to.getTime() - params.from.getTime()) / 250;
+    }
+  } catch (error) {
+    console.error(error);
+    if (typeof error == "string") {
+      res.status(400).json({ error: `Invalid parameters : parameter '${error}' is unvalid.`});
+    } else {
+      res.status(400).json({ error: 'Invalid parameters'});
+    }
+    return;
+  }
+  try {
+    console.log("params : ", params);
     const archiveData = await getArchiveData();
     res.json(archiveData);
   } catch (error) {
