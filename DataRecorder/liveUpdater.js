@@ -43,7 +43,27 @@ function updateLive() {
   //writeJsonFile(pathLiveDataJsonPTDR, getDataLivePTDR());
 }
 
+function saveInDB() {
+  console.log(liveData);
+  const data = {
+    loc_lat: liveData.location.coords[0],
+    loc_lng: liveData.location.coords[1],
+    tmpr: liveData.measurements.temperature,
+    hmdt: liveData.measurements.humidity,
+    prsr: liveData.measurements.presure,
+    rain: null,
+    lght: liveData.measurements.light,
+    wind_speed: liveData.measurements.wind.speed,
+    wind_dir: liveData.measurements.wind.direction
+  };
+  console.log("save in db ", data);
+  db.set(data);
+}
+
 updateLive();
+
+setTimeout(saveInDB, 1000);
+setInterval(saveInDB, 30000);
 
 module.exports = {
   liveData: liveData,
