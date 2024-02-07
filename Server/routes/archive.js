@@ -3,7 +3,26 @@ const router = express.Router();
 
 const db = require('../database.js');
 
-async function getArchiveData() {
+async function getArchiveData(params) {
+  const result = await db.get(
+    JSON.stringify(params.from).replaceAll('"', ''),
+    JSON.stringify(params.to).replaceAll('"', ''),
+    params.filterSQL
+  );
+  console.log(result);
+  const dates = [];
+  const jsonResult = {
+    name: "piensg028",
+    status: true,
+    location: {
+      date: dates,
+      coords: []
+    },
+    measurements: {
+      date: dates
+    }
+  };
+  //return jsonResult;
   // Retourne un objet JSON vide avec la structure spécifique
   return {
     "name" : "name",
@@ -91,9 +110,10 @@ router.get('/', async function(req, res, next) {
   }
   try {
     console.log("params : ", params);
-    const archiveData = await getArchiveData();
+    const archiveData = await getArchiveData(params);
     res.json(archiveData);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
