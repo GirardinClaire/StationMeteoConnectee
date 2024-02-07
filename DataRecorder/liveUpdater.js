@@ -44,7 +44,6 @@ function updateLive() {
 }
 
 function saveInDB() {
-  console.log(liveData);
   const data = {
     loc_lat: liveData.location.coords[0],
     loc_lng: liveData.location.coords[1],

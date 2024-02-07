@@ -64,6 +64,7 @@ const result = getValues("-1000m", "0m", ["a", "b"]);
 result.then(console.log)
 //*/
 
+//getValues("-1000m", "0m", ["loc_lat", "loc_lng", "tmpr", "hmdt", "prsr", "rain", "lght", "wind_speed", "wind_dir"]).then(console.log);
 
 module.exports = {
   set: saveValues,
