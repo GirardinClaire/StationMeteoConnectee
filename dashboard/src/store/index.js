@@ -4,6 +4,7 @@ export default createStore({
   state() {
     return {
       count: 0,
+      zoom: 2,
     };
   },
   getters: {},
