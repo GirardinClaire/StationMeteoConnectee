@@ -27,3 +27,17 @@ initial bucket name: `meteo`
 docker compose down
 docker volume rm docker_influxdb-storage
 ```
+
+## DataRecorder Server
+
+### Installation
+- Dans un terminal
+``̀
+cd DataRecorder
+echo "export INFLUXDB_TOKEN=*********" > .env
+npm install
+npm run start
+```
+
+#### Dev
+`npm run watch` pour redémarrer le serveur automatiquement après une modification de fichier

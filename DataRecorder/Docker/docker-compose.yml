@@ -1,6 +1,6 @@
 services:
   influxdb:
-    image: influxdb:2.6-alpine
+    image: influxdb:2.7.5-alpine
     #env_file:
     #  - influxv2.env
     container_name: influxdb
@@ -11,7 +11,8 @@ services:
       - monitoring
     volumes:
       - influxdb-storage:/var/lib/influxdb2:rw
-#    environment:
+    environment:
+       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=token
 #      - INFLUXDB_DB=stationmeteo
 #      - DOCKER_INFLUXDB_INIT_MODE=upgrade
 #      - DOCKER_INFLUXDB_INIT_USERNAME=user

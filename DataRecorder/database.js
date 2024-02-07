@@ -1,20 +1,69 @@
-const { InfluxDB } = require('@influxdata/influxdb-client');
 
-// Création du client InfluxDB
-const influxUrl = 'http://localhost:8086';
-const influxToken = 'fKPqUp2avcPkez6hrU1p4TSHcKXKAQho5H51pcia_Vsvd3egChMSg2O_kAgwKBS5Kbj-GOH81P6HrxGtqVrrWg==';
-const influxOrganisation = 'ensg';
-const influxBucket = 'meteo';
+const {InfluxDB, Point} = require('@influxdata/influxdb-client')
 
-const client = new InfluxDB({
-  url: influxUrl,
-  token: influxToken,
+const token = process.env.INFLUXDB_TOKEN
+const url = 'http://127.0.0.1:8086'
+
+const org = "ensg";
+const bucket = "meteo";
+
+const client = new InfluxDB({url, token});
+const queryClient = client.getQueryApi(org);
+const writeClient = client.getWriteApi(org, bucket, 'ns');
+
+const table = "measures";
+
+function saveValues(data) {
+  const point = new Point(table);
+  for (var key in data) {
+    point.floatField(key, data[key]);
+  }
+  writeClient.writePoint(point);
+  writeClient.flush();
+}
+
+function getValues(start, stop, fields) {
+  const filter_fields = fields.map(key => `r["_field"] == "${key}"`).join(" or ");
+  const query = `from(bucket: "${bucket}")
+    |> range(start: ${start}, stop:${stop})
+    |> filter(fn: (r) => r._measurement == "${table}")
+    |> filter(fn: (r) => ${filter_fields})
+  `;
+
+  const data = {};
+
+  return new Promise((resolve, reject) => {
+    queryClient.queryRows(query, {
+      next: (row, tableMeta) => {
+        const tableObject = tableMeta.toObject(row);
+        if (!data[tableObject._time]) {
+          data[tableObject._time] = {};
+        }
+        data[tableObject._time][tableObject._field] = tableObject._value;
+      },
+      error: (error) => {
+        reject(error);
+      },
+      complete: () => {
+        resolve(data);
+      },
+    });
+  })
+}
+
+/*
+saveValues({
+  a:1,
+  b:2,
+  c:80.4
 });
 
-const queryApi = client.getQueryApi(influxOrganisation);
+const result = getValues("-1000m", "0m", ["a", "b"]);
+result.then(console.log)
+//*/
+
 
 module.exports = {
-  queryApi:queryApi,
-  influxBucket:influxBucket,
-  // client:client
+  set: saveValues,
+  get: getValues,
 };
