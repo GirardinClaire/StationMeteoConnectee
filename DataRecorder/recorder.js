@@ -87,7 +87,7 @@ function readFileSensors(fileContent) {
   });
 
   lu.liveData.measurements.date = parsed.date;
-  lu.liveData.measurements.light = parsed.luminosity;
+  lu.liveData.measurements.light = parsed.measurements.luminosity;
   lu.liveData.measurements.wind = {
     speed: parsed.measurements.wind_speed_avg,
     direction: parsed.measurements.wind_heading,
