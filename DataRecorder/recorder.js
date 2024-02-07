@@ -2,8 +2,6 @@ const fs = require('fs');
 require('log-timestamp');
 const lu = require("./liveUpdater.js");
 
-const dir_simul = true ? "/home/formation/Bureau/simulPi" : "";
-
 function watchFile(path, callback, callbackError = console.error, first_load=true) {
   if (first_load) {
     fs.readFile(path, 'utf8', (err, data) => {
@@ -23,7 +21,7 @@ function watchFile(path, callback, callbackError = console.error, first_load=tru
   });
 }
 
-const pathDataSensHat = dir_simul + "/dev/shm/tph.log";
+const pathDataSensHat = "/dev/shm/tph.log";
 function readFileTph(fileContent) {
   const parsed = JSON.parse(fileContent);
   parsed.date = new Date(parsed.date);
@@ -37,7 +35,7 @@ function readFileTph(fileContent) {
 watchFile(pathDataSensHat, readFileTph);
 
 
-const pathDataRain = dir_simul + "/dev/shm/rainCounter.log";
+const pathDataRain = "/dev/shm/rainCounter.log";
 function readFileRain(fileContent) {
   const date = new Date(fileContent);
 
@@ -49,7 +47,7 @@ function readFileRain(fileContent) {
 }
 watchFile(pathDataRain, readFileRain);
 
-const pathDataGPS = dir_simul + "/dev/shm/gpsNmea";
+const pathDataGPS = "/dev/shm/gpsNmea";
 function readFileGPS(fileContent) {
   // trame NMEA type $GPGGA
   // `${trameCode=GPGGA},{date},{lat},{latDirection},{lon},{lonDirection},{positionnementType},{nbSatelites},{horizontalPrecision},{altitude},{altitudeUnit},{*empty},{checksum}`
@@ -79,7 +77,7 @@ function readFileGPS(fileContent) {
 }
 watchFile(pathDataGPS, readFileGPS);
 
-const pathDataSensors = dir_simul + "/dev/shm/sensors";
+const pathDataSensors = "/dev/shm/sensors";
 function readFileSensors(fileContent) {
   const parsed = JSON.parse(fileContent);
   parsed.date = new Date(parsed.date);

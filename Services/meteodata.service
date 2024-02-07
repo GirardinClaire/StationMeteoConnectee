@@ -1,0 +1,11 @@
+[Unit]
+Description=node server to store data from meteo sensors to influxDB
+
+[Service]
+WorkingDirectory=/home/pi/station/DataRecorder
+ExecStartPre=/usr/bin/npm install
+ExecStart=/usr/bin/npm start
+EnvironementFile=/home/pi/station/.env
+
+[Install]
+WantedBy=multi-user.target

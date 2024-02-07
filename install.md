@@ -41,3 +41,8 @@ npm run start
 
 #### Dev
 `npm run watch` pour redémarrer le serveur automatiquement après une modification de fichier
+
+
+## Raspberry
+
+Executez `bash install/install_pi.sh` ou `bash install/update_pi.sh`

@@ -67,8 +67,11 @@ function saveInDB() {
 
 updateLive();
 
-setTimeout(saveInDB, 1000);
-setInterval(saveInDB, 30000);
+setTimeout(() => {
+  setInterval(saveInDB, 30000);
+  saveInDB();
+}, 30000 - (new Date()).getTime() % 30000);
+
 
 module.exports = {
   liveData: liveData,
