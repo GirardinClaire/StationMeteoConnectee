@@ -4,7 +4,15 @@ const lu = require("./liveUpdater.js");
 
 const dir_simul = true ? "/home/formation/Bureau/simulPi" : "";
 
-function watchFile(path, callback, callbackError = console.error) {
+function watchFile(path, callback, callbackError = console.error, first_load=true) {
+  if (first_load) {
+    fs.readFile(path, 'utf8', (err, data) => {
+      if (err) {
+        return callbackError(err);
+      }
+      callback(data.trim());
+    });
+  }
   fs.watchFile(path, {interval: 10}, (curr, prev) => {
     fs.readFile(path, 'utf8', (err, data) => {
       if (err) {
