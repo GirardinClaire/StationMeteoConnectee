@@ -16,7 +16,9 @@ const table = "measures";
 function saveValues(data) {
   const point = new Point(table);
   for (var key in data) {
-    point.floatField(key, data[key]);
+    if (data[key] != null) {
+      point.floatField(key, data[key]);
+    }
   }
   writeClient.writePoint(point);
   writeClient.flush();
