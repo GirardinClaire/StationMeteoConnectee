@@ -1,0 +1,19 @@
+{
+  "name": "datarecorder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "watch": "nodemon --ignore Data/*",
+    "start": "node main.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.33.2",
+    "log-timestamp": "^0.3.0"
+  }
+}
