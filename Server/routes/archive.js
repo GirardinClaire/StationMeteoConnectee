@@ -99,6 +99,8 @@ router.get('/', async function(req, res, next) {
     } else {
       params.interval = (params.to.getTime() - params.from.getTime()) / 250;
     }
+    // interval step: 30 sec, interval min: 30 sec
+    params.interval = Math.max(1, Math.round(params.interval / 30000)) * 30000;
   } catch (error) {
     console.error(error);
     if (typeof error == "string") {
