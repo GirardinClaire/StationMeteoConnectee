@@ -9,41 +9,40 @@ async function getArchiveData(params) {
     JSON.stringify(params.to).replaceAll('"', ''),
     params.filterSQL
   );
-  console.log(result);
-  const dates = [];
+  const dates = Object.keys(result);
   const jsonResult = {
     name: "piensg028",
     status: true,
     location: {
       date: dates,
-      coords: []
+      coords: dates.map(d => [result[d].loc_lat, result[d].loc_lng])
     },
     measurements: {
       date: dates
     }
   };
-  //return jsonResult;
-  // Retourne un objet JSON vide avec la structure spécifique
-  return {
-    "name" : "name",
-    "location" : {
-      "date" : [ "2000-01-23T04:56:07.000+00:00", "2000-01-23T04:56:07.000+00:00" ],
-      "coords" : [ [ 0.8008281904610115, 0.8008281904610115 ], [ 0.8008281904610115, 0.8008281904610115 ] ]
-    },
-    "status" : true,
-    "measurements" : {
-      "date" : [ "2000-01-23T04:56:07.000+00:00", "2000-01-23T04:56:07.000+00:00" ],
-      "rain" : [ 0.5, 0.3 ],
-      "light" : [ 2.3021358869347655, 2.3021358869347655 ],
-      "temperature" : [ 1.4658129805029452, 1.4658129805029452 ],
-      "humidity" : [ 7.061401241503109, 7.061401241503109 ],
-      "pressure" : [ 6.027456183070403, 6.027456183070403 ],
-      "wind" : {
-        "speed" : [ 5.962133916683182, 5.962133916683182 ],
-        "direction" : [ 5.637376656633329, 5.637376656633329 ]
-      }
-    }
-  };
+  if (params.filterSQL.includes("prsr")) {
+    jsonResult.measurements.pressure = dates.map(d => result[d].prsr);
+  }
+  if (params.filterSQL.includes("tmpr")) {
+    jsonResult.measurements.temperature = dates.map(d => result[d].tmpr);
+  }
+  if (params.filterSQL.includes("rain")) {
+    jsonResult.measurements.rain = dates.map(d => result[d].rain);
+  }
+  if (params.filterSQL.includes("wind_speed")) {
+    jsonResult.measurements.wind = dates.map(d => ({
+      speed:result[d].wind_speed,
+      direction: result[d].wind_dir
+    }));
+  }
+  if (params.filterSQL.includes("hmdt")) {
+    jsonResult.measurements.humidity = dates.map(d => result[d].hmdt);
+  }
+  if (params.filterSQL.includes("lght")) {
+    jsonResult.measurements.light = dates.map(d => result[d].lght);
+  }
+  return jsonResult;
 }
 
 const filterMap = {
@@ -84,10 +83,10 @@ router.get('/', async function(req, res, next) {
     if (req.query.interval) {
       const intervalValue = parseFloat(req.query.interval);
       const intervalFactor = req.query.interval?.substr(-1);
-      const factors = {
-        s: 1000,
-        m: 1000*60,
-        h: 1000*60*60,
+      const factors = { // in ms
+        "s": 1000,
+        "m": 1000*60,
+        "h": 1000*60*60,
         "D": 1000*60*60*24,
         "M": 1000*60*60*24*30,
         "Y": 1000*60*60*24*365
@@ -99,7 +98,7 @@ router.get('/', async function(req, res, next) {
     } else {
       params.interval = (params.to.getTime() - params.from.getTime()) / 250;
     }
-    // interval step: 30 sec, interval min: 30 sec
+    // interval step: 30 sec (=30000ms), interval min: 30 sec
     params.interval = Math.max(1, Math.round(params.interval / 30000)) * 30000;
   } catch (error) {
     console.error(error);
