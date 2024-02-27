@@ -3,106 +3,118 @@ const router = express.Router();
 
 const db = require('../database.js');
 
-
-// // Exemple de requête simple pour vérifier la connexion
-// const query = 'from(bucket: "' + db.influxBucket + '") |> range(start: -1h)';
-// db.queryApi.queryRows(query, {
-//   next(row, tableMeta) {
-//     console.log(row, tableMeta);
-//   },
-//   error(error) {
-//     console.error(error);
-//   },
-//   complete() {
-//     console.log('Query completed successfully');
-//   },
-// });
-
-
-
-
-// async function getArchiveData(from, to, filter, interval) {
-//   // Utilisation d'une fluxQuery pour récupérer les données depuis la base de données
-//   const fluxQuery = `
-//   SELECT *
-//   FROM meteo
-//   WHERE time >= ${from} - INTERVAL '${from}`;
-  
-//   // Collection des lignes de données depuis la base de données
-//   const { promise } = queryApi.collectRows(fluxQuery);
-//   const rows = await promise;
-
-//   // Formatage des données récupérées dans la structure attendue
-//   const formattedData = rows.map(row => ({
-//     name: row.name,
-//     location: {
-//       date: row.date,
-//       coords: row.coords
-//     },
-//     status: row.status,
-//     measurements: {
-//       date: row.date,
-//       rain: row.rain,
-//       light: row.light,
-//       temperature: row.temperature,
-//       humidity: row.humidity,
-//       pressure: row.pressure,
-//       wind: {
-//         speed: row.windSpeed,
-//         direction: row.windDirection
-//       }
-//     }
-//   }));
-
-//   // Retour des données formatées
-//   return formattedData;
-// }
-
-// /* GET Archive data */
-// router.get('/', async function(req, res, next) {
-//   const { from, to, filter, interval } = req.query;
-//   try {
-//     const archiveData = await getArchiveData(from, to, filter, interval);
-//     res.json(archiveData);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-
-
-async function getArchiveData() {
-  // Retourne un objet JSON vide avec la structure spécifique
-  return {
-    "name" : "name",
-    "location" : {
-      "date" : [ "2000-01-23T04:56:07.000+00:00", "2000-01-23T04:56:07.000+00:00" ],
-      "coords" : [ [ 0.8008281904610115, 0.8008281904610115 ], [ 0.8008281904610115, 0.8008281904610115 ] ]
+async function getArchiveData(params) {
+  const result = await db.get(
+    JSON.stringify(params.from).replaceAll('"', ''),
+    JSON.stringify(params.to).replaceAll('"', ''),
+    params.filterSQL
+  );
+  const dates = Object.keys(result);
+  const jsonResult = {
+    name: "piensg028",
+    status: true,
+    location: {
+      date: dates,
+      coords: dates.map(d => [result[d].loc_lat, result[d].loc_lng])
     },
-    "status" : true,
-    "measurements" : {
-      "date" : [ "2000-01-23T04:56:07.000+00:00", "2000-01-23T04:56:07.000+00:00" ],
-      "rain" : [ "2000-01-23T04:56:07.000+00:00", "2000-01-23T04:56:07.000+00:00" ],
-      "light" : [ 2.3021358869347655, 2.3021358869347655 ],
-      "temperature" : [ 1.4658129805029452, 1.4658129805029452 ],
-      "humidity" : [ 7.061401241503109, 7.061401241503109 ],
-      "pressure" : [ 6.027456183070403, 6.027456183070403 ],
-      "wind" : {
-        "speed" : [ 5.962133916683182, 5.962133916683182 ],
-        "direction" : [ 5.637376656633329, 5.637376656633329 ]
-      }
+    measurements: {
+      date: dates
     }
   };
+  if (params.filterSQL.includes("prsr")) {
+    jsonResult.measurements.pressure = dates.map(d => result[d].prsr);
+  }
+  if (params.filterSQL.includes("tmpr")) {
+    jsonResult.measurements.temperature = dates.map(d => result[d].tmpr);
+  }
+  if (params.filterSQL.includes("rain")) {
+    jsonResult.measurements.rain = dates.map(d => result[d].rain);
+  }
+  if (params.filterSQL.includes("wind_speed")) {
+    jsonResult.measurements.wind = dates.map(d => ({
+      speed:result[d].wind_speed,
+      direction: result[d].wind_dir
+    }));
+  }
+  if (params.filterSQL.includes("hmdt")) {
+    jsonResult.measurements.humidity = dates.map(d => result[d].hmdt);
+  }
+  if (params.filterSQL.includes("lght")) {
+    jsonResult.measurements.light = dates.map(d => result[d].lght);
+  }
+  return jsonResult;
 }
 
+const filterMap = {
+  prsr: ["prsr"],
+  tprt: ["tmpr"],
+  rain: ["rain"],
+  wind: ["wind_speed", "wind_dir"],
+  hmdt: ["hmdt"],
+  lght: ["lght"],
+  pressure: ["prsr"],
+  temperature: ["tmpr"],
+  humidity: ["hmdt"],
+  light: ["lght"]
+}
+const filterKeys = Object.keys(filterMap);
 
 
-/* GET Archive data */
 router.get('/', async function(req, res, next) {
+  const params = {};
   try {
-    const archiveData = await getArchiveData();
+    params.from = new Date(req.query.from);
+    if (req.query.from == null || isNaN(params.from.getTime())) {
+      throw "from";
+    }
+    params.to = req.query.to ? new Date(req.query.to): new Date();
+    if (isNaN(params.to.getTime()) || params.to <= params.from) {
+      throw "to";
+    }
+    params.filter = req.query.filter?.split(",");
+    if (params.filter == null || params.filter == "all") {
+      params.filter = filterKeys;
+    }
+    if (params.filter.filter(value => !filterKeys.includes(value)).length!=0) {
+      throw "filter";
+    }
+    params.filterSQL = ["loc_lat", "loc_lng", ...new Set(params.filter.map(f => filterMap[f]).flat())];
+
+    if (req.query.interval) {
+      const intervalValue = parseFloat(req.query.interval);
+      const intervalFactor = req.query.interval?.substr(-1);
+      const factors = { // in ms
+        "s": 1000,
+        "m": 1000*60,
+        "h": 1000*60*60,
+        "D": 1000*60*60*24,
+        "M": 1000*60*60*24*30,
+        "Y": 1000*60*60*24*365
+      };
+      params.interval = intervalValue * factors[intervalFactor];
+      if (isNaN(params.interval)) {
+        throw "interval";
+      }
+    } else {
+      params.interval = (params.to.getTime() - params.from.getTime()) / 250;
+    }
+    // interval step: 30 sec (=30000ms), interval min: 30 sec
+    params.interval = Math.max(1, Math.round(params.interval / 30000)) * 30000;
+  } catch (error) {
+    console.error(error);
+    if (typeof error == "string") {
+      res.status(400).json({ error: `Invalid parameters : parameter '${error}' is unvalid.`});
+    } else {
+      res.status(400).json({ error: 'Invalid parameters'});
+    }
+    return;
+  }
+  try {
+    console.log("params : ", params);
+    const archiveData = await getArchiveData(params);
     res.json(archiveData);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
