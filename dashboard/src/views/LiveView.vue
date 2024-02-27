@@ -28,6 +28,8 @@ export default {
 }
 
 .map {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 20em;
+  grid-template-rows: 1fr;
 }
 </style>
