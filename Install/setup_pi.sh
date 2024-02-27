@@ -1,7 +1,9 @@
 pipass=raspberry;
 
 echo "init repository...";
-sshpass -p $pipass ssh pi@piensg028 "mkdir /home/pi/station && echo 'INFLUXDB_TOKEN=***' > /home/pi/station/.env";
+sshpass -p $pipass ssh pi@piensg028 "mkdir /home/pi/station && \
+echo 'INFLUXDB_TOKEN=***
+PORT=80' > /home/pi/station/.env";
 
 echo "transfer files...";
 sshpass -p $pipass scp -r DataRecorder/ pi@piensg028:/home/pi/station;

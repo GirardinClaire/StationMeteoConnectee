@@ -2,21 +2,31 @@ const fs = require('fs');
 require('log-timestamp');
 const lu = require("./liveUpdater.js");
 
-function watchFile(path, callback, callbackError = console.error, first_load=true) {
+function watchFile(path, callback, callbackError = console.error, first_load = true) {
   if (first_load) {
     fs.readFile(path, 'utf8', (err, data) => {
       if (err) {
         return callbackError(err);
       }
-      callback(data.trim());
+      const fileContent = data.trim();
+      try {
+        callback(fileContent);
+      } catch (error) {
+        lu.logError(`${callback} ( ${fileContent} ) : ${error}`);
+      }
     });
   }
-  fs.watchFile(path, {interval: 10}, (curr, prev) => {
+  fs.watchFile(path, { interval: 10 }, (curr, prev) => {
     fs.readFile(path, 'utf8', (err, data) => {
       if (err) {
         return callbackError(err);
       }
-      callback(data.trim());
+      const fileContent = data.trim();
+      try {
+        callback(fileContent);
+      } catch (error) {
+        lu.logError(`${callback} ( ${fileContent} ) : ${error}`);
+      }
     });
   });
 }
@@ -40,7 +50,7 @@ function readFileRain(fileContent) {
   const date = new Date(fileContent);
 
   if (lu.liveData.measurements.rain != date && date >= lu.incrData.rainComputedDate) {
-    lu.incrData.rainTurn ++;
+    lu.incrData.rainTurn++;
   }
   lu.liveData.measurements.rain = date;
   lu.updateLive();
@@ -63,11 +73,11 @@ function readFileGPS(fileContent) {
     precision: parseFloat(trameSpl[8]),
     altitude: parseFloat(trameSpl[9]),
   };
-  data.latGeo = Math.round((parseInt(data.lat/100) + (data.lat % 100)/60)*1e6) / 1e6;
-  data.lngGeo = Math.round((parseInt(data.lng/100) + (data.lng % 100)/60)*1e6) / 1e6;
+  data.latGeo = Math.round((parseInt(data.lat / 100) + (data.lat % 100) / 60) * 1e6) / 1e6;
+  data.lngGeo = Math.round((parseInt(data.lng / 100) + (data.lng % 100) / 60) * 1e6) / 1e6;
 
   const time = parseFloat(trameSpl[1]);
-  data.date.setHours(parseInt(time / 10000)+1);
+  data.date.setHours(parseInt(time / 10000) + 1);
   data.date.setMinutes(parseInt(time % 10000 / 100));
   data.date.setSeconds(Math.round(time % 100));
 

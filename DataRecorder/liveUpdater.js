@@ -6,7 +6,7 @@ const pathLiveDataJsonPTDR = "Data/livePtdr.json";
 
 const liveData = {
   name: "piensg028",
-  status:true,
+  status: true,
   location: {
     date: null,
     coords: [null, null]
@@ -44,7 +44,7 @@ function updateLive() {
   writeJsonFile(pathLiveDataJson, liveData);
   const liveDataPtdr = {
     name: liveData.name,
-    status:liveData.status,
+    status: liveData.status,
     location: liveData.location,
     measurements: {
       date: liveData.measurements.date,
@@ -58,7 +58,7 @@ function updateLive() {
 
 function saveInDB() {
   const now = new Date();
-  const dt = (now.getTime() - incrData.rainComputedDate.getTime()) /3600000;
+  const dt = (now.getTime() - incrData.rainComputedDate.getTime()) / 3600000;
 
   const data = {
     loc_lat: liveData.location.coords[0],
@@ -84,9 +84,19 @@ setTimeout(() => {
   saveInDB();
 }, 30000 - (new Date()).getTime() % 30000);
 
+function logError(data) {
+  console.error(data);
+  fs.appendFile(
+    'Data/logsError',
+    `${(new Date()).toUTCString()} : ${data}\n`,
+    () => { });
+}
+
+logError("start server");
 
 module.exports = {
   liveData: liveData,
   updateLive: updateLive,
   incrData: incrData,
+  logError: logError
 };
