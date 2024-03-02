@@ -23,10 +23,6 @@ export default {
 </script>
 
 <style scoped>
-.archives {
-  /* Styles pour le conteneur principal */
-}
-
 .map {
   display: flex;
 }

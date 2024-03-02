@@ -23,10 +23,6 @@ export default {
 </script>
 
 <style scoped>
-.live {
-  /* Styles pour le conteneur principal */
-}
-
 .map {
   display: grid;
   grid-template-columns: 1fr 20em;
