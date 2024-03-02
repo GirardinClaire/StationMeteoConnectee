@@ -2,7 +2,7 @@
   <div class="archives">
     <h1>Visualisation des données d'archives</h1>
     <div class="archive_content">
-      <SensorSelect />
+      <SensorSelect multiple />
       <SensorSelect />
     </div>
   </div>
