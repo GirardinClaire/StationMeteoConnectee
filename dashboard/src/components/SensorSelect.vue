@@ -1,6 +1,7 @@
 <template>
   <div class="SensorSelector">
-    <h1>Capteur(s)</h1>
+    <h1 v-if="multiple">Capteurs</h1>
+    <h1 v-if="!multiple">Capteur</h1>
     <div class="list-items-sensor">
       <table>
         <tr v-if="!multiple">
@@ -10,6 +11,8 @@
               :id="id + 'SensorNull'"
               name="sensorName"
               value=""
+              v-model="selected_key"
+              checked
             />
           </td>
           <td>
@@ -18,13 +21,20 @@
         </tr>
         <tr v-for="sensor in listSensors" :key="sensor.name">
           <td>
-            <input v-if="multiple" type="checkbox" :id="id + sensor.name" />
+            <input
+              v-if="multiple"
+              type="checkbox"
+              :id="id + sensor.name"
+              :value="sensor.name"
+              v-model="selected_keys"
+            />
             <input
               v-if="!multiple"
               type="radio"
               :id="id + sensor.name"
               name="sensorName"
               :value="sensor.name"
+              v-model="selected_key"
             />
           </td>
           <td>
@@ -52,6 +62,8 @@ export default {
   data: function () {
     return {
       id: this.uuid,
+      selected_keys: [], // mode multiple
+      selected_key: null, // mode simple
     };
   },
   props: {
@@ -68,11 +80,20 @@ export default {
         uri: sensors[k],
       }));
     },
+    value() {
+      return this.multiple
+        ? [...this.selected_keys.entries()].map((e) => e[1])
+        : this.selected_key
+        ? [this.selected_key]
+        : [];
+    },
   },
   methods: {
     add_sensor() {
+      console.log(this);
       const name = prompt("Sensor name\nEx: pi28");
       if (!name) {
+        this.$emit("eventTest", "aefzf");
         return;
       }
       const uri = prompt("Sensor uri\nEx: piensg028:80");

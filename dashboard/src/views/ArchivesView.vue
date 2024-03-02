@@ -2,8 +2,10 @@
   <div class="archives">
     <h1>Visualisation des données d'archives</h1>
     <div class="archive_content">
-      <SensorSelect multiple />
-      <SensorSelect />
+      <SensorSelect multiple ref="sensorSel1" v-on:eventTest="eventTest" />
+      <SensorSelect ref="sensorSel2" />
+      <button @click="action(1)">log value</button>
+      <button @click="action(2)">log value</button>
     </div>
   </div>
 </template>
@@ -17,6 +19,18 @@ export default {
   name: "ArchivesView",
   components: {
     SensorSelect,
+  },
+  methods: {
+    eventTest(data) {
+      console.log(data);
+    },
+    action(v) {
+      if (v == 1) {
+        console.log(this.$refs.sensorSel1.value);
+      } else {
+        console.log(this.$refs.sensorSel2.value);
+      }
+    },
   },
 };
 </script>
