@@ -2,10 +2,8 @@
   <div class="archives">
     <h1>Visualisation des données d'archives</h1>
     <div class="archive_content">
-      <SensorSelect multiple ref="sensorSel1" v-on:eventTest="eventTest" />
-      <SensorSelect ref="sensorSel2" />
-      <button @click="action(1)">log value</button>
-      <button @click="action(2)">log value</button>
+      <div></div>
+      <Filter ref="filter" />
     </div>
   </div>
 </template>
@@ -13,25 +11,14 @@
 <script>
 // @ is an alias to /src
 
-import SensorSelect from "@/components/SensorSelect.vue";
+import Filter from "@/components/archives/FilterComponent.vue";
 
 export default {
   name: "ArchivesView",
   components: {
-    SensorSelect,
+    Filter,
   },
-  methods: {
-    eventTest(data) {
-      console.log(data);
-    },
-    action(v) {
-      if (v == 1) {
-        console.log(this.$refs.sensorSel1.value);
-      } else {
-        console.log(this.$refs.sensorSel2.value);
-      }
-    },
-  },
+  methods: {},
 };
 </script>
 

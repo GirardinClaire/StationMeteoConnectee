@@ -4,3 +4,4 @@
 **/*lock.json
 **/.env
 **/logsError
+**/.vscode

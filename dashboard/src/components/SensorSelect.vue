@@ -1,7 +1,7 @@
 <template>
   <div class="SensorSelector">
-    <h1 v-if="multiple">Capteurs</h1>
-    <h1 v-if="!multiple">Capteur</h1>
+    <h2 v-if="multiple">Capteurs</h2>
+    <h2 v-if="!multiple">Capteur</h2>
     <div class="list-items-sensor">
       <table>
         <tr v-if="!multiple">
@@ -46,6 +46,7 @@
       </table>
     </div>
     <button :onclick="this.add_sensor">Ajouter un capteur</button>
+    <span style="display: none">{{ value }}</span>
   </div>
 </template>
 
@@ -81,11 +82,13 @@ export default {
       }));
     },
     value() {
-      return this.multiple
+      const newValue = this.multiple
         ? [...this.selected_keys.entries()].map((e) => e[1])
         : this.selected_key
         ? [this.selected_key]
         : [];
+      this.$emit("input", newValue);
+      return newValue;
     },
   },
   methods: {
@@ -93,7 +96,6 @@ export default {
       console.log(this);
       const name = prompt("Sensor name\nEx: pi28");
       if (!name) {
-        this.$emit("eventTest", "aefzf");
         return;
       }
       const uri = prompt("Sensor uri\nEx: piensg028:80");
