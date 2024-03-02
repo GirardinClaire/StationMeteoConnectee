@@ -1,29 +1,39 @@
 <template>
   <div class="archives">
     <h1>Visualisation des données d'archives</h1>
-    <div class="map">
-      <Graph />
-      <From />
+    <div class="archive_content">
+      <SensorSelect />
+      <SensorSelect />
     </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Graph from "@/components/archives/GraphComponent.vue";
-import From from "@/components/archives/FormComponent.vue";
+
+import SensorSelect from "@/components/SensorSelect.vue";
 
 export default {
-  name: "LiveView",
+  name: "ArchivesView",
   components: {
-    Graph,
-    From,
+    SensorSelect,
   },
 };
 </script>
 
 <style scoped>
-.map {
-  display: flex;
+.archive_content {
+  background-color: rgba(127, 127, 127, 0.1);
+  position: relative;
+  height: calc(100vh - 8.2em);
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: 1fr;
+  /*padding: 0.1em;*/
+  box-sizing: border-box;
+}
+
+.archive_content > :nth-child(2) {
+  background-color: green;
 }
 </style>
