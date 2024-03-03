@@ -1,30 +1,6 @@
 <template>
   <div class="data-panel">
-    <div id="addSensor">
-      <form action="">
-        <textarea>Ajouter un capteur</textarea>
-        <button>Ok</button>
-      </form>
-    </div>
-
-    <div id="SelectSensor">
-      <select v-model="selectedSensor">
-        <option disabled value="">Sélectionnez un capteur</option>
-        <option
-          v-for="(sensor, index) in sensorList"
-          :key="index"
-          :value="sensor"
-        >
-          {{ sensor }}
-        </option>
-      </select>
-    </div>
-
-    <div id="ShowAllData">
-      <input type="checkbox" id="showAllDataCheckbox" v-model="showAllData" />
-      <label for="showAllDataCheckbox">Afficher toutes les données</label>
-    </div>
-
+    <Filter ref="filter" />
     <div>
       <p>Data goes here</p>
     </div>
@@ -34,9 +10,13 @@
 <script>
 // @ is an alias to /src
 import store from "@/store";
+import Filter from "@/components/live/FilterComponentLive.vue";
 
 export default {
   store: store,
+  components: {
+    Filter,
+  },
   data() {
     return {
       addedSensor: "", // Variable pour stocker le capteur à ajouter
