@@ -2,7 +2,7 @@
   <div class="archives">
     <h1>Visualisation des données d'archives</h1>
     <div class="archive_content">
-      <div></div>
+      <Graph ref="graph" />
       <Filter ref="filter" />
     </div>
   </div>
@@ -12,11 +12,13 @@
 // @ is an alias to /src
 
 import Filter from "@/components/archives/FilterComponent.vue";
+import Graph from "@/components/archives/GraphComponent.vue";
 
 export default {
   name: "ArchivesView",
   components: {
     Filter,
+    Graph,
   },
   methods: {},
 };
@@ -33,8 +35,9 @@ export default {
   /*padding: 0.1em;*/
   box-sizing: border-box;
 }
-
+/*
 .archive_content > :nth-child(2) {
   background-color: green;
 }
+*/
 </style>
