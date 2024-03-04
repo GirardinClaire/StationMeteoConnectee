@@ -11,12 +11,20 @@ const COLORS = {
   prsr: "#A62615",
   rain: "#008FFB",
   tmpr: "#00C53E",
+  lght: "#DEAC63",
+  hmdt: "#02F1F4",
+  wspd: "#175F23",
+  wdir: "#673F63",
 };
 
 const TITLES = {
-  prsr: "Pression (Pa)",
+  prsr: "Pression (hPa)",
   rain: "Pluie (mm/m2/h)",
   tmpr: "Température (°C)",
+  lght: "Luminosité (Lux)",
+  wspd: "Vitesse du vent (m/s)",
+  wdir: "Direction du vent (deg)",
+  hmdt: "Hygrométrie (%)",
 };
 
 //const KEYS = Object.keys(COLORS);
@@ -25,6 +33,10 @@ const MEASUREMENTS = {
   pressure: "prsr",
   rain: "rain",
   temperature: "tmpr",
+  light: "lght",
+  wind_speed: "wspd",
+  wind_direction: "wdir",
+  humidity: "hmdt",
 };
 
 export default {
@@ -105,11 +117,17 @@ export default {
     },
     chartOptions() {
       return {
+        responsive: [
+          {
+            breakpoint: null,
+          },
+        ],
         colors: this.colors,
         chart: {
           //height: 350,
           type: "line",
           stacked: false,
+          width: "100%",
         },
         dataLabels: {
           enabled: false,
@@ -144,24 +162,30 @@ export default {
       return;
     },
     addData(data) {
-      console.log(data);
       const name = data.name;
       const dates = data.measurements.date;
 
+      const makeMeasures = (y, key) => {
+        const measures =
+          y instanceof Array ? y : new Array(dates.length).fill(y);
+        this.data.push({
+          x: dates,
+          y: measures,
+          type: MEASUREMENTS[key],
+          origin: name,
+        });
+      };
+
       for (const key in data.measurements) {
         if (MEASUREMENTS[key]) {
-          // A CAUSE DE CEUX QUI ONT PAS LU LA DOC, IL FAUT REFORMATER LEURS DONNEES POUR POUVOIR UTILISER LEURS SERVICES
-          const measures =
-            data.measurements[key] instanceof Array
-              ? data.measurements[key]
-              : new Array(dates.length).fill(data.measurements[key]);
-          console.log(measures);
-          this.data.push({
-            x: dates,
-            y: measures,
-            type: MEASUREMENTS[key],
-            origin: name,
-          });
+          makeMeasures(data.measurements[key], key);
+        } else {
+          for (const key2 in data.measurements[key]) {
+            const nKey = `${key}_${key2}`;
+            if (MEASUREMENTS[nKey]) {
+              makeMeasures(data.measurements[key][key2], nKey);
+            }
+          }
         }
       }
 
