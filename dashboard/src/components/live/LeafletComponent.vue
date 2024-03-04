@@ -7,18 +7,7 @@
         name="OpenStreetMap"
       />
       <span>{{ sensorsData }}</span>
-      <l-marker
-        v-for="(sensor, index) in sensorsDatas"
-        :key="index"
-        :lat-lng="[
-          (() => {
-            console.log('a', sensor);
-            return sensor.location.coords[0];
-          })(),
-          sensor.location.coords[1],
-        ]"
-      ></l-marker>
-      <l-marker :lat-lng="[52.519967, 13.405117]"></l-marker>
+      <l-marker v-for="pos in markerPosition" :key="pos" :lat-lng="pos" />
     </l-map>
   </div>
 </template>
@@ -40,10 +29,11 @@ export default {
       zoom: 2,
       sensorsData: [],
       mapCenter: [47.41322, -1.219482], // Centre de la carte par défaut
+      markerPosition: [],
     };
   },
-  async mounted() {
-    await this.requestSensorsLocation();
+  mounted() {
+    this.requestSensorsLocation();
   },
 
   computed: {
@@ -64,27 +54,18 @@ export default {
   },
 
   methods: {
-    async requestSensorsLocation() {
-      try {
-        Promise.all(
-          this.request_query.map((url) => fetch(url).then((r) => r.json()))
-        )
+    requestSensorsLocation() {
+      this.markerPosition = [];
+      this.request_query.forEach((url) => {
+        fetch(url)
+          .then((r) => r.json())
           .then((result) => {
-            this.sensorsData.push(result);
+            this.markerPosition.push(result.location.coords);
           })
-          .catch((error) => {
-            console.error(
-              "Une erreur s'est produite lors de la récupération des données:",
-              error
-            );
+          .catch((err) => {
+            console.error(`Fail to load position from ${url} : ${err}`);
           });
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des données de tous les capteurs:",
-          error
-        );
-      }
-      // console.log(this.sensorsData);
+      });
     },
   },
 };
@@ -92,7 +73,8 @@ export default {
 
 <style scoped>
 .leaflet-map {
-  height: calc(100vh - 11em); /* ajustement la hauteur */
+  height: calc(100vh - 11em);
+  /* ajustement la hauteur */
   position: relative;
 }
 
