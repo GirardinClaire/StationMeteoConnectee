@@ -1,20 +1,22 @@
 <template>
   <div class="Datetime">
     <h2>Durée</h2>
-    <table>
-      <tr>
-        <td><label for="from">Date début</label></td>
-        <td><input type="date" id="from" v-model="from" /></td>
-      </tr>
-      <tr>
-        <td><label for="to">Date fin</label></td>
-        <td><input type="date" id="to" v-model="to" /></td>
-      </tr>
-      <tr>
-        <td><label for="interval">Interval</label></td>
-        <td><input type="text" id="interval" v-model="interval" /></td>
-      </tr>
-    </table>
+    <div class="tableContent">
+      <table>
+        <tr>
+          <td><label for="from">Date début</label></td>
+          <td><input type="date" id="from" v-model="from" /></td>
+        </tr>
+        <tr>
+          <td><label for="to">Date fin</label></td>
+          <td><input type="date" id="to" v-model="to" /></td>
+        </tr>
+        <tr>
+          <td><label for="interval">Interval</label></td>
+          <td><input type="text" id="interval" v-model="interval" /></td>
+        </tr>
+      </table>
+    </div>
     <span style="display: none">{{ value }}</span>
   </div>
 </template>
@@ -50,8 +52,12 @@ export default {
 
 <style scoped>
 div.Datetime {
-  background-color: rgba(127, 127, 127, 0.1);
   overflow-y: scroll;
+}
+
+div.Datetime div.tableContent {
+  background-color: rgba(127, 127, 127, 0.1);
+  margin: 0 5%;
 }
 
 div.Datetime table {

@@ -3,7 +3,7 @@
     <h1>Visualisation des données d'archives</h1>
     <div class="archive_content">
       <Graph ref="graph" />
-      <Filter ref="filter" />
+      <Filter ref="filter" v-on:submit="onSubmitFilter" />
     </div>
   </div>
 </template>
@@ -20,7 +20,30 @@ export default {
     Filter,
     Graph,
   },
-  methods: {},
+  methods: {
+    onSubmitFilter(URIs) {
+      this.$refs.graph.clear();
+      URIs.forEach((uri) => {
+        fetch(uri, {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((r) => {
+            return r.json();
+          })
+          .then((r) => {
+            r.uri = uri;
+            this.$refs.graph.addData(r);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      });
+    },
+  },
 };
 </script>
 
@@ -35,6 +58,7 @@ export default {
   /*padding: 0.1em;*/
   box-sizing: border-box;
 }
+
 /*
 .archive_content > :nth-child(2) {
   background-color: green;
