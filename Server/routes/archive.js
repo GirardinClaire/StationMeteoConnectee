@@ -31,10 +31,10 @@ async function getArchiveData(params) {
     jsonResult.measurements.rain = dates.map(d => result[d].rain);
   }
   if (params.filterSQL.includes("wind_speed")) {
-    jsonResult.measurements.wind = dates.map(d => ({
-      speed:result[d].wind_speed,
-      direction: result[d].wind_dir
-    }));
+    jsonResult.measurements.wind = {
+      speed: dates.map(d => result[d].wind_speed),
+      direction: dates.map(d => result[d].wind_dir),
+    };
   }
   if (params.filterSQL.includes("hmdt")) {
     jsonResult.measurements.humidity = dates.map(d => result[d].hmdt);
@@ -60,14 +60,14 @@ const filterMap = {
 const filterKeys = Object.keys(filterMap);
 
 
-router.get('/', async function(req, res, next) {
+router.get('/', async function (req, res, next) {
   const params = {};
   try {
     params.from = new Date(req.query.from);
     if (req.query.from == null || isNaN(params.from.getTime())) {
       throw "from";
     }
-    params.to = req.query.to ? new Date(req.query.to): new Date();
+    params.to = req.query.to ? new Date(req.query.to) : new Date();
     if (isNaN(params.to.getTime()) || params.to <= params.from) {
       throw "to";
     }
@@ -75,7 +75,7 @@ router.get('/', async function(req, res, next) {
     if (params.filter == null || params.filter == "all") {
       params.filter = filterKeys;
     }
-    if (params.filter.filter(value => !filterKeys.includes(value)).length!=0) {
+    if (params.filter.filter(value => !filterKeys.includes(value)).length != 0) {
       throw "filter";
     }
     params.filterSQL = ["loc_lat", "loc_lng", ...new Set(params.filter.map(f => filterMap[f]).flat())];
@@ -85,11 +85,11 @@ router.get('/', async function(req, res, next) {
       const intervalFactor = req.query.interval?.substr(-1);
       const factors = { // in ms
         "s": 1000,
-        "m": 1000*60,
-        "h": 1000*60*60,
-        "D": 1000*60*60*24,
-        "M": 1000*60*60*24*30,
-        "Y": 1000*60*60*24*365
+        "m": 1000 * 60,
+        "h": 1000 * 60 * 60,
+        "D": 1000 * 60 * 60 * 24,
+        "M": 1000 * 60 * 60 * 24 * 30,
+        "Y": 1000 * 60 * 60 * 24 * 365
       };
       params.interval = intervalValue * factors[intervalFactor];
       if (isNaN(params.interval)) {
@@ -103,9 +103,9 @@ router.get('/', async function(req, res, next) {
   } catch (error) {
     console.error(error);
     if (typeof error == "string") {
-      res.status(400).json({ error: `Invalid parameters : parameter '${error}' is unvalid.`});
+      res.status(400).json({ error: `Invalid parameters : parameter '${error}' is unvalid.` });
     } else {
-      res.status(400).json({ error: 'Invalid parameters'});
+      res.status(400).json({ error: 'Invalid parameters' });
     }
     return;
   }
