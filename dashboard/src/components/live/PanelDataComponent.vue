@@ -1,48 +1,28 @@
 <template>
   <div class="data-panel">
-    <div id="addSensor">
-      <form action="">
-        <textarea>Ajouter un capteur</textarea>
-        <button>Ok</button>
-      </form>
-    </div>
-
-    <div id="SelectSensor">
-      <select v-model="selectedSensor">
-        <option disabled value="">Sélectionnez un capteur</option>
-        <option
-          v-for="(sensor, index) in sensorList"
-          :key="index"
-          :value="sensor"
-        >
-          {{ sensor }}
-        </option>
-      </select>
-    </div>
-
-    <div id="ShowAllData">
-      <input type="checkbox" id="showAllDataCheckbox" v-model="showAllData" />
-      <label for="showAllDataCheckbox">Afficher toutes les données</label>
-    </div>
-
-    <div>
+    <Filter ref="filter" />
+    <!-- <div>
       <p>Data goes here</p>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import store from "@/store";
+import Filter from "@/components/live/FilterLiveComponent.vue";
 
 export default {
   store: store,
+  components: {
+    Filter,
+  },
   data() {
     return {
-      addedSensor: "", // Variable pour stocker le capteur à ajouter
-      selectedSensor: "", // Variable pour stocker le capteur sélectionné
-      sensorList: ["piensg028", "piensg029"], // Liste des noms des capteurs
-      showAllData: false, // Variable pour stocker l'état de la case à cocher
+      // addedSensor: "", // Variable pour stocker le capteur à ajouter
+      // selectedSensor: "", // Variable pour stocker le capteur sélectionné
+      // sensorList: ["piensg028", "piensg029"], // Liste des noms des capteurs
+      // showAllData: false, // Variable pour stocker l'état de la case à cocher
     };
   },
   computed: {},
