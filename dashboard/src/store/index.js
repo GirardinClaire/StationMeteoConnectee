@@ -12,7 +12,7 @@ export default createStore({
       count: 0,
       sensors: sensors
         ? sensors
-        : { piensg027: "piensg027:3000", piensg028: "piensg028:80" },
+        : { piensg027: "piensg027:80", piensg028: "piensg028:80" },
     };
   },
   getters: {},
