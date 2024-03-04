@@ -6,7 +6,6 @@
         layer-type="base"
         name="OpenStreetMap"
       />
-      <span>{{ sensorsData }}</span>
       <l-marker v-for="pos in markerPosition" :key="pos" :lat-lng="pos" />
     </l-map>
   </div>

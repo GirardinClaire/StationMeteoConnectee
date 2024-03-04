@@ -8,7 +8,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import store from "@/store";
 import Filter from "@/components/live/FilterLiveComponent.vue";
 
@@ -18,16 +17,10 @@ export default {
     Filter,
   },
   data() {
-    return {
-      // addedSensor: "", // Variable pour stocker le capteur à ajouter
-      // selectedSensor: "", // Variable pour stocker le capteur sélectionné
-      // sensorList: ["piensg028", "piensg029"], // Liste des noms des capteurs
-      // showAllData: false, // Variable pour stocker l'état de la case à cocher
-    };
+    return {};
   },
   computed: {},
   methods: {},
-  // watch:
 };
 </script>
 

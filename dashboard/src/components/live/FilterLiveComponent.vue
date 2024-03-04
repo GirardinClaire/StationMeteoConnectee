@@ -16,12 +16,55 @@
     />
     <button @click="submit">Valider</button>
     <span style="display: none">queries preview: {{ request_query }}</span>
+
+    <!-- Tableau pour afficher les données récupérées -->
+
+    <table v-if="this.sensorData.length > 0">
+      <tbody>
+        <tr v-for="(data, index) in this.sensorData" :key="index">
+          <td>Capteur</td>
+          <td>{{ data.name }}</td>
+        </tr>
+        <tr v-for="(data, index) in this.sensorData" :key="index">
+          <td>Pluie</td>
+          <td>{{ data.measurements.rain }}</td>
+        </tr>
+        <tr v-for="(data, index) in this.sensorData" :key="index">
+          <td>Pression</td>
+          <td>{{ data.measurements.pressure }}</td>
+        </tr>
+        <tr v-for="(data, index) in this.sensorData" :key="index">
+          <td>Température</td>
+          <td>{{ data.measurements.temperature }}</td>
+        </tr>
+        <tr v-for="(data, index) in this.sensorData" :key="index">
+          <td v-if="ptdrFilter_value == ''">Vitesse vent</td>
+          <td v-if="ptdrFilter_value == ''">
+            {{ data.measurements.wind.speed }}
+          </td>
+        </tr>
+        <tr v-for="(data, index) in this.sensorData" :key="index">
+          <td v-if="ptdrFilter_value == ''">Direction vent</td>
+          <td v-if="ptdrFilter_value == ''">
+            {{ data.measurements.wind.direction }}
+          </td>
+        </tr>
+        <tr v-for="(data, index) in this.sensorData" :key="index">
+          <td v-if="ptdrFilter_value == ''">Luminosité</td>
+          <td v-if="ptdrFilter_value == ''">{{ data.measurements.light }}</td>
+        </tr>
+        <tr v-for="(data, index) in this.sensorData" :key="index">
+          <td v-if="ptdrFilter_value == ''">Hygrométrie</td>
+          <td v-if="ptdrFilter_value == ''">
+            {{ data.measurements.humidity }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-
 import SensorSelect from "@/components/SensorSelect.vue";
 import ptdrFilter from "@/components/live/ptdrComponent.vue";
 import store from "@/store/index.js";
@@ -36,6 +79,7 @@ export default {
     return {
       ptdrFilter_value: "",
       sensors_value: [],
+      sensorData: [],
     };
   },
   computed: {
@@ -59,10 +103,7 @@ export default {
         this.request_query.map((url) => fetch(url).then((r) => r.json()))
       )
         .then((results) => {
-          // Stocker les données des capteurs dans sensorData
           this.sensorData = results;
-          // Vous pouvez également effectuer d'autres opérations avec les données ici
-          console.log(this.sensorData);
         })
         .catch((error) => {
           console.error(
